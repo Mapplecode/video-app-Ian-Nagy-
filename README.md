@@ -1,4 +1,15 @@
-admin login
+# video-app-Ian-Nagy-
 
-admin@localhost.com
-admin@12345
+## Install all the required packages using the command
+
+```
+pip install -r requirements.txt
+```
+
+## Install mongo db in you system the It automatically create the tables for you.
+
+## For webapp run
+
+```
+python app.py
+```
