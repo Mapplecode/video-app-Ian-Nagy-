@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Stream APP</title>
+<!-- Font Awesome --> 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
+<!-- MDB -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.css" rel="stylesheet"/>
+</head>
+<body>
+<style>
+  body {
+    background-color: #fbfbfb;
+  }
+  
+  @media (min-width: 991.98px) {
+    main {
+        padding-left: 240px;
+    }
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding: 58px 0 0;
+    /* Height of navbar */
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+    width: 240px;
+    z-index: 600;
+  }
+  
+  @media (max-width: 991.98px) {
+    .sidebar {
+        width: 100%;
+    }
+  }
+  
+  .sidebar .active {
+    border-radius: 5px;
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+  }
+  
+  .sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    padding-top: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Scrollable contents if viewport is shorter than content. */
+  }
+</style>
+<!--Main Navigation-->
+<header>
+  <!-- Sidebar -->
+  <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+      <div class="list-group list-group-flush mx-3 mt-4">
+        <a href="{% if dashboard_name == 'Admin Dashboard' %}admindashboard{%else%}#{%endif%}" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+          <strong><i class="fas fa-tachometer-alt"></i> {{ dashboard_name }}</strong>
+        </a>
+        {% if dashboard_name == "Admin Dashboard" %}
+         <a href="#" class="list-group-item list-group-item-action py-2 ripple" data-mdb-toggle="modal" data-mdb-target="#exampleModal1"><i class="fas fa-add fa-fw me-3"></i><span>Create Project</span></a>
+         <a href="{{ url_for('allprojects') }}" class="list-group-item list-group-item-action py-2 ripple"><span><i class="fas fa-file me-3" aria-hidden="true"></i>All Projects</span></a>        
+         <a href="{{ url_for('all_video') }}" class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-video fa-fw me-3"></i><span>All Video's</span></a>
+        <a href="{{ url_for('all_que') }}" class="list-group-item list-group-item-action py-2 ripple"><span><i class="fa fa-question-circle me-3" aria-hidden="true"></i>All Questions</span></a>
+        <a href="{{ url_for('userdata') }}" class="list-group-item list-group-item-action py-2 ripple"><span><i class="fa fa-users me-3" aria-hidden="true"></i>All Users</span></a>
+       
+        {% endif %}
+        <!-- <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-lock fa-fw me-3"></i><span>Password</span></a> -->
+        <!-- <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-chart-line fa-fw me-3"></i><span>Analytics</span></a> -->
+        <!-- <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-chart-pie fa-fw me-3"></i><span>SEO</span> -->
+        <!-- </a> -->
+        <!-- <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-chart-bar fa-fw me-3"></i><span>Orders</span></a>
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-globe fa-fw me-3"></i><span>International</span></a>
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-building fa-fw me-3"></i><span>Partners</span></a>
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-calendar fa-fw me-3"></i><span>Calendar</span></a>
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-users fa-fw me-3"></i><span>Users</span></a>
+        <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i class="fas fa-money-bill fa-fw me-3"></i><span>Sales</span></a> -->
+      </div>
+    </div>
+  </nav>
+  <!-- Sidebar -->
+
+  <!-- Navbar -->
+  <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <!-- Container wrapper -->
+    <div class="container-fluid">
+      <!-- Toggle button -->
+      <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Brand -->
+      <a class="navbar-brand" href="#">
+        <img src="" height="25" alt="logo" loading="lazy" />
+      </a>
+      <!-- Search form -->
+      <form class="d-none d-md-flex input-group w-auto my-auto">
+        <input autocomplete="off" type="search" class="form-control rounded" placeholder='Search' style="min-width: 225px" />
+        <span class="input-group-text border-0"><i class="fas fa-search"></i></span>
+      </form>
+
+      <!-- Right links -->
+      <ul class="navbar-nav ms-auto d-flex flex-row">
+        <!-- Notification dropdown -->
+        <!-- <li class="nav-item dropdown">
+          <a class="nav-link me-3 me-lg-0 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-bell"></i>
+            <span class="badge rounded-pill badge-notification bg-danger">1</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item" href="#"><i class="fas fa-message"></i> Some news</a></li>
+            <li><a class="dropdown-item" href="#"><i class="fas fa-message"></i> Another news</a></li>
+            <li>
+              <a class="dropdown-item" href="#"><i class="fas fa-message"></i> Something else here</a>
+            </li>
+          </ul>
+        </li> -->
+        <!-- Avatar -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle hidden-arrow d-flex align-items-center" href="#" id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+            <sub>click</sub>
+            <img src="static/images/power.png" class="rounded-circle" height="30" alt="" loading="lazy" />
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> My profile</a></li>
+            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gears"></i> Settings</a></li>
+
+            <!-- Button trigger modal -->
+            <li><a class="dropdown-item" href="" data-mdb-toggle="modal" data-mdb-target="#exampleModal"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
+
+<!-- Modal -->
+<!-- Logout Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Logout</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">Are you sure?</div>
+      <div class="modal-footer">
+          <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="btn btn-danger" data-mdb-dismiss="modal">Logout</button>
+          </form>
+        <button type="button" class="btn btn-primary">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+<!-- Create Project Modal -->
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create Project</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="{{ url_for('admin_dashboard') }}" method="post">
+        <div class="modal-body">
+          <div class="d-flex flex-row align-items-center mb-4">
+            <div class="form-outline flex-fill mb-0">
+              <input type="text" id="form3Example3c" class="form-control" name="projectname" required/>
+              <label class="form-label" for="form3Example3c">Enter the Project Name</label>
+            </div>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success" data-mdb-dismiss="modal">Create</button>
+          <button type="button" class="btn btn-primary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</header>
+<!-- Modal -->
+{% block content %}
+
+{% endblock %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.js"></script>  
+</body>
+</html>

@@ -1,0 +1,90 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<main style="margin-top: 58px">
+  <div class="container pt-4">
+    <a href="{{ url_for('create_qa')}}"><button type="button" class="btn btn-primary float-end"><i class="fas fa-add fa-fw me-3"></i>
+      Add Question</button></a>
+    <table class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+          <tr>
+            <th>SR</th>
+            <th>Question</th>
+            <th>Note</th>
+            <th>status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        {% for que in questionsdata %}
+        <tbody>
+          <tr>
+            <td>
+                {{  loop.index }}
+            </td>
+            <td>
+              <p class="fw-normal mb-1">{{ que.question }}</p>
+              <!-- <p class="text-muted mb-0"></p> -->
+            </td>
+            <td>
+              <p>
+                {{ que.note }}
+              </p>
+            </td>
+            <td>
+              {% if que.status == "active" %}
+                <span class="badge badge-success rounded-pill d-inline">Active</span>
+              {% elif que.status == "pending" %}
+                <span class="badge badge-warning rounded-pill d-inline">Pending</span>
+              {% elif que.status == "deactive" %}
+                <span class="badge badge-danger rounded-pill d-inline">Deactive</span>
+              {% endif %}
+              </td>
+            <td>
+              <a href="/updatequetion/{{que._id}}">
+                <button
+                      type="button"
+                      class="btn btn-success btn-rounded btn-sm fw-bold"
+                      data-mdb-ripple-color="dark"
+                      >
+                Edit
+              </button>
+              </a>
+              <hr>
+                <form action="/delete/{{que._id}}" method="post">
+                <button
+                      type="submit"
+                      class="btn btn-danger btn-rounded btn-sm fw-bold">
+                Delete
+              </button>
+            </form> 
+  
+            </a>
+              
+            </td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+    </div>
+</main>
+
+<!-- <div class="modal fade" id="deletequestion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete Question</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">Are you sure?</div>
+      <div class="modal-footer">
+          <form action="" method="post">
+            <button type="submit" class="btn btn-danger" data-mdb-dismiss="modal">Delete</button>
+          </form>
+        <button type="button" class="btn btn-primary">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+{% endblock %}

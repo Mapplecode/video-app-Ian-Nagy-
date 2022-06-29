@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{dashboard_name}} Watch the video</title>
+<!-- Font Awesome --> 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
+<!-- MDB -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.css" rel="stylesheet"/>
+
+</head>
+<body>
+
+
+<div class="container mt-5">
+    <!-- page 0 -->
+    <div class="row" id="welcome" hidden>
+        <div class="col-md-3">
+        </div>
+        <div class="card shadow col-md-6 mt-5">
+            <div class="card-body">
+                <form action="" method="post">
+                    <p>"<strong>Welcome!</strong> As part of this study, we will be recording your 
+                        face while you watch the video that we will show you shortly."</p>
+                        <p>Do you consent to have your face recorded?</p>
+                                               
+                        <p><input class="form-check-input" required type="checkbox" value="true" id="flexCheckDefault" name="consent"/> Please click the "Confirm Consent for Recording" button below</p>
+                        <div class="row">
+                            <div class="col-md-4">
+                                </div>
+                            <div class="col-md-2">
+                            <!--     <div class="form-check">
+                                    <input class="form-check-input" required type="checkbox" value="true" id="flexCheckDefault" name="consent"/>
+                                    <label class="form-check-label" for="flexCheckDefault"></label>
+                                    
+                                  </div> -->
+                                </div> 
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-primary" id="start">Confirm Consent for Recording <br>& Begin Session</button>
+                                </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<!-- instruction -->
+<div class="row" id="instruction" hidden>
+    <div class="col-md-3">
+    </div>
+    <div class="card shadow col-md-6 mt-5">
+        <div class="card-body">
+            <form action="" method="post">
+                <p><strong>Session Instructions</strong></p>
+                <ul><li>In just a moment, you will see a video 
+                    advertisement on this screen.
+                </li>
+                <br>
+                <li>After you watch the video, (2 minutes in length), we will ask you 
+                    a few short questions to get your feedback on your experience.</li>
+                    <br>
+                <li>Please click the ""Start the Session"" button 
+                    below to begin the session.</li></ul>    
+                    <button type="button" class="btn btn-primary float-end" id="session">Start the Session</button>     
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- VIdeo  -->
+<div class="row" id="video" hidden>
+    <div class="card shadow mt-5 mb-5">
+        <div class="card-body">
+            <form action="" method="post">
+                <h5 class="card-title">Watch this video:</h5>
+                <hr>
+                    <video id="video" width="100%" class="video-container responsive" controls  autoplay>
+                        <source src="/{{ video.filename }}" type="video/mp4" />
+                        </video>
+                        <hr>
+                    <button type="button" class="btn btn-primary float-end" id="continue">Continue</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Question -->
+{% for que in questionsdata %}
+{% if que.status == "active" %}
+<div class="row" id="question{{loop.index}}" hidden>
+    <div class="col-md-3"></div>
+    <div class="card shadow mt-5 mb-5 col-md-6">
+        <div class="card-body">
+            
+            <form action="" method="post">
+                <h5 class="card-title">Post-Video Question #{{loop.index}} of {{loop.length }}:</h5>
+                <h6>➡️ {{ que.question }}</h6>
+                <p hidden id="queid{{loop.index}}">{{ que._id}}</p>
+                <p class="text-muted">{{ que.note }}</p>
+                <div class="form-group mt-2">
+                    <div class="form-outline">
+                        <textarea class="form-control rounded-0" rows="3" name="question" required id="feedback{{loop.index}}"></textarea>
+                        <label class="form-label" for="feedback">Feedback</label>
+                      </div>
+                </div>
+                <div class="form-group mt-2">
+                    <button type="button" class="btn btn-success float-end" id="quebutton{{loop.index}}">Confirm Response</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+<!-- end Question -->
+
+<div class="row" id="thanks" hidden>
+    <div class="col-md-3"></div>
+    <div class="card shadow mt-5 mb-5 col-md-6">
+        <div class="card-body">
+            <form action="" method="post">
+                <h5 class="card-title">Session Complete</h5>
+                <p>Thank you for your help on this project! 
+                    Your session is complete.</p>
+                    <p>Have a great day!</p>
+                    <button type="button" class="btn btn-success float-end" id="close">Close Window</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</div>
+<!-- MDB -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.js"></script>  
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+$( document ).ready(function() {
+    $('#welcome').removeAttr('hidden');
+});
+$("#start").click(function() {
+    if ($("#flexCheckDefault").prop('checked')){
+        $('#welcome').hide();
+        navigator.getUserMedia (
+        // constraints
+        {
+            video: true,
+            audio: true
+        },
+
+        // successCallback
+        function(localMediaStream) {
+            var video = document.querySelector('video');
+            // console.log("Confirm!!")
+            // video.src = window.URL.createObjectURL(localMediaStream);
+            // video.onloadedmetadata = function(e) {
+            //   console.log("Yes")
+            //    // Do something with the video here.
+            // };
+        },
+
+        // errorCallback
+        function(err) {
+            if(err === PERMISSION_DENIED) {
+            // console.log("Refused!!")
+            // Explain why you need permission and how to update the permission setting
+            }
+        }
+        );
+        $('#instruction').removeAttr('hidden');
+    }
+});
+$("#session").click(function() {
+    $('#instruction').hide();
+    $('#video').removeAttr('hidden');
+    $.ajax({
+      type: 'POST',
+      url: "/start/cam",
+      data: 'data',
+      dataType: "json",
+      success: function(data){
+            console.log("success")
+        }
+    });
+});
+$("#continue").click(function() {
+    $('#video').hide();
+    $('#question1').removeAttr('hidden');
+});
+
+// TODO dynamic
+$("#quebutton1").click(function() {
+    $('#question1').hide();
+    $('#question2').removeAttr('hidden');
+});
+
+$("#quebutton2").click(function() {
+    $('#question2').hide();
+    $('#question3').removeAttr('hidden');
+});
+
+$("#quebutton3").click(function() {
+    $('#question3').hide();
+    $('#question4').removeAttr('hidden');
+});
+
+$("#quebutton4").click(function() {
+    $('#question4').hide();
+    $('#thanks').removeAttr('hidden');
+    var data = {
+            "question1feedback":$("#feedback1").val(),
+           
+            "question3feedback":$("#feedback2").val(),
+           
+            "question2feedback":$("#feedback3").val(),
+             
+            "question4feedback":$("#feedback4").val(),
+    }
+        
+    $.ajax({
+      type: 'POST',
+      url: "/questionsfeedback",
+      data: data,
+      dataType: "json",
+      success: function(data){
+            console.log("success")
+        }
+    });
+
+});
+
+$("#close").click(function() {
+    window.top.close();
+});
+</script>
+</body>
+</html>

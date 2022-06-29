@@ -1,0 +1,42 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<!--Main layout-->
+<main style="margin-top: 58px">
+  <div class="container pt-4">
+      <div class="row">
+        <div class="card mt-4">
+          <div class="card-body">
+            <h2>Hello, Admin</h2>
+            </div>
+            </div>
+        <div class="col-md-6">
+          <div class="card mt-4">
+            <div class="card-body">
+              <p class="text-center">
+                <img src="./static/images/video.png" alt="" width="50%">
+                <br>
+                <a href="#" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#exampleModal1"><i class="fas fa-add fa-fw me-3"></i><span>Create Project</span></a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card mt-4">
+            <div class="card-body">
+              <p class="text-center">
+                <img src="./static/images/group.png" alt="group.png" width="50%">
+                <br>
+              <a href="{{ url_for('userdata') }}" class="btn btn-primary"><i class="fas fa-user fa-fw me-3"></i><span>Check User Data</span></a>
+              </p>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</main>
+
+<!--Main layout-->
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<!--Main layout-->
+<main style="margin-top: 58px">
+  <div class="container pt-4">
+      <div class="row">
+          <div class="card shadow">
+              <div class="card-body">
+                <form method=post enctype=multipart/form-data>
+                    <h2 class="text-center mb-5"> Creating " {{ project_name }} "</h2>
+                    
+                    {% with messages = get_flashed_messages() %}  
+                    {% if messages %}  
+                        {% for message in messages %}  
+                            {% if message.split(',')[-1] == 'succ' %}
+                            {% elif message.split(',')[-1] == 'warn' %}
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong>Warning!</strong> {{ message }}.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                            {% endif %}
+                                <p></p>  
+                                
+                        {% endfor %}  
+                        {% endif %}  
+                    {% endwith %}  
+                
+                    <!-- 2 column grid layout with text inputs for the first and last names -->
+                    <div class="row mb-4">
+                      <div class="col">
+                        <div class="form-outline">
+                          <input type="text" id="form6Example1" class="form-control" name="title" required/>
+                          <label class="form-label" for="form6Example1">Title</label>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-outline">
+                          <input type="text" id="form6Example2" class="form-control" name="category" required/>
+                          <label class="form-label" for="form6Example2" >Category</label>
+                        </div>
+                      </div>
+                    </div>
+                  
+                    <!-- Text input -->
+                    <!-- <div class="form-outline mb-4">
+                      <input type="text" id="form6Example3" class="form-control" />
+                      <label class="form-label" for="form6Example3">Company name</label>
+                    </div> -->
+                  
+                    <!-- Message input -->
+                    <div class="form-outline mb-4">
+                        <i class="baseline-description"></i>
+                      <textarea class="form-control" id="form6Example7" rows="4" name="description"></textarea>
+                      <label class="form-label" for="form6Example7">Description</label>
+                    </div>
+
+                    <div class="form-outline mb-4">
+                        <input class="form-control" type="file" id="formFileDisabled" name="file" required />
+                    </div>
+                    
+                    
+
+
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-primary btn-block mb-4">Create</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+</main>
+
+<!--Main layout-->
+
+{% endblock %}
