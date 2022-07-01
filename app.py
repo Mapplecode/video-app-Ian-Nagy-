@@ -2,7 +2,7 @@ from flask import Flask,render_template,session,redirect,request,flash,url_for,R
 from flask_session import Session
 from functools import wraps
 import pymongo,time
-import datetime
+from datetime import datetime
 from passlib.hash import pbkdf2_sha256
 import uuid, os
 from opencvoperation import *
@@ -29,10 +29,6 @@ def login_required(f):
 @app.route("/")
 def home():
 	return render_template("home.html")
-
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route("/login",methods=['GET','POST'])
 def login():
@@ -65,6 +61,7 @@ def register():
 		"name": request.form.get('name'),
 		"email": request.form.get('email'),
 		"password": request.form.get('password'),
+		"role": "user",
 		"status" : "active",
 		"created_at": datetime.today()
 		}
