@@ -14,9 +14,6 @@ def video_thumbnail(video_path,image_path):
         count += 1
     return filename
 
-
-
-
 # def record_video():
 #     '''
 #         # only live feed showing , capture Image (c), start video recording (v), pause video recording (p)

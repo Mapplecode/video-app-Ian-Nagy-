@@ -42,9 +42,16 @@
 
       <div class="d-flex align-items-center">  
         {% if session['logged_in'] %}
+        {% if session['user']['role'] == 'admin' %}
+        <button type="button" class="btn btn-primary me-3">
+          <a href="{{ url_for('admin_dashboard') }}" style="color: white;" target="_blank">Admin Dashboard</a>
+        </button>
+        {% else %}
          <button type="button" class="btn btn-primary me-3">
            <a href="{{ url_for('dashboard') }}" style="color: white;" target="_blank">Dashboard</a>
          </button>
+         {% endif %}
+        
         {% else %}
         <button type="button" class="btn btn-link px-3 me-2">
           <a href="{{ url_for('login') }}"style="color: black;" target="_blank">Login</a> 
@@ -56,7 +63,7 @@
 
         <a
           class="btn btn-dark px-3"
-          href=""
+          href="https://github.com/Mapplecode/video-app-Ian-Nagy-"
           role="button"
           ><i class="fab fa-github"></i
         ></a>
