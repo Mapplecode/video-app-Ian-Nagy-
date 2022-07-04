@@ -324,14 +324,11 @@ def feedback_qa():
 #===================== (end) ===============
 
 @app.route("/video/watch/<id>",methods=["GET","POST"])
-@login_required
 def watch_video(id):
 	dashboard_name = "WATCH | "
 	single_video = db.videos.find_one({ "_id": id })
 	all_questions = list(db.questions.find())
-	datalen = len(all_questions)
-
-	return render_template("dashboard/watchvideo.html",dashboard_name=dashboard_name,video=single_video,datalen=datalen,questionsdata=all_questions)
+	return render_template("dashboard/watchvideo.html",dashboard_name=dashboard_name,video=single_video,questionsdata=all_questions)
 
 @app.route("/start/cam",methods=["POST"])
 def start_Cam():
