@@ -224,6 +224,7 @@ def create_project():
 				flash("Invaild extension system allow 	MP4, MOV, FLV, MKV, WMV only these extentions.,warn")
 		
 	dashboard_name = "Admin Dashboard"
+
 	return render_template("dashboard/admin/projects/createproject.html",dashboard_name=dashboard_name,project_name=project_name)
 
 
@@ -354,7 +355,9 @@ def allprojects():
 def projectdetailview(id):
 	dashboard_name = "Admin Dashboard"
 	projectdata = db.project.find_one({"_id":id})
-	return render_template("dashboard/admin/projects/projectdetailview.html",dashboard_name=dashboard_name,pdata=projectdata)
+	videodata = db.videos.find()
+
+	return render_template("dashboard/admin/projects/projectdetailview.html",dashboard_name=dashboard_name,pdata=projectdata,videodata=videodata)
 
 if __name__ == "__main__":
 	app.run()

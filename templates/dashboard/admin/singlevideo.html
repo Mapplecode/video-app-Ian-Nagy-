@@ -34,8 +34,23 @@
           </p>
 
         <p>Share Video unique link : <a id="p1" href="http://127.0.0.1:5000/video/watch/{{ video._id }}" onclick="copyToClipboard('#p1')">http://127.0.0.1:5000/video/watch/{{ video._id }}</a></p>
+          
+        <form class="row row-cols-lg-auto g-3 align-items-center">
+          <div class="form-group mt-2">
+            <div class="form-outline">
+              <label for="role">Share link with accounts</label>
+              <select class="form-select" aria-label="Default select example" name="status" multiple>
+                <option >Select Status</option>
+                <option value="active">Active</option>
+                <option value="deactive">Deactive</option>
+              </select>
+            </div>
+            </div>
+        </form>
+
         <div class="card-footer">
             <small class="text-muted">{{ video.created_at.strftime('%c') }}</small>
+
           </div>
         </div>
         </div>
