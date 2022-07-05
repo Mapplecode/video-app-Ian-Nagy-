@@ -1,4 +1,5 @@
 from flask import Flask,render_template,session,redirect,request,flash,url_for,Response
+# from flask_paginate import Pagination, get_page_args
 from flask_session import Session
 from functools import wraps
 import pymongo,time
@@ -311,10 +312,16 @@ def delete(id):
 @login_required
 def feedback_qa():
 	if request.method == "POST":
+		# ins_feedback = {
+		# 		"_id": uuid.uuid4().hex,
+		# 		"data": dict(request.form),
+		# 		"user_info" : {"_id":session['user']["_id"],"email" : session['user']["email"]},
+		# 		"created_at": datetime.today()
+		# 		}
+		
 		ins_feedback = {
 				"_id": uuid.uuid4().hex,
 				"data": dict(request.form),
-				"user_info" : {"_id":session['user']["_id"],"email" : session['user']["email"]},
 				"created_at": datetime.today()
 				}
 		db.feedback.insert_one(ins_feedback)
@@ -333,12 +340,31 @@ def watch_video(id):
 @app.route("/start/cam",methods=["POST"])
 def start_Cam():
 	if request.method == "POST":
-		cv2.destroyAllWindows()
-		# if request.form("status") == "start":
-		# 	return {"test":"success"}
-		# elif request.form("status") == "stop":
-		# 	break
-			
+		# cap = cv2.VideoCapture(0)
+		# frame_width = int(cap.get(3))
+		# frame_height = int(cap.get(4))
+		# video_cod = cv2.VideoWriter_fourcc(*'XVID')
+		# video_output= cv2.VideoWriter('captured_video.avi',
+		# 					video_cod,
+		# 					10,
+		# 					(frame_width,frame_height))
+		if request.form.get("status") == "start":
+		# 	while(True):
+		# 		ret, frame = cap.read()
+		# 		if ret == True: 
+		# 			video_output.write(frame)
+		# 			cv2.imshow('frame',frame)
+		# 			if cv2.waitKey(1) & 0xFF == ord('x'):
+		# 				break
+		# 		else:
+		# 			break  
+			print("The video was successfully saved")
+			return {"test":"success"}
+		elif request.form.get("status") == "stop":
+			# cap.release()
+			# video_output.release()
+			# cv2.destroyAllWindows()
+			return {"test":"success"} 
 
 #================================(Project)==================================
 
@@ -353,7 +379,6 @@ def projectdetailview(id):
 	dashboard_name = "Admin Dashboard"
 	projectdata = db.project.find_one({"_id":id})
 	videodata = db.videos.find()
-
 	return render_template("dashboard/admin/projects/projectdetailview.html",dashboard_name=dashboard_name,pdata=projectdata,videodata=videodata)
 
 if __name__ == "__main__":
