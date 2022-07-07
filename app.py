@@ -476,5 +476,6 @@ def projectdetailview(id):
 	return render_template("dashboard/admin/projects/projectdetailview.html",dashboard_name=dashboard_name,pdata=projectdata,videodata=videodata)
 
 if __name__ == "__main__":
-	app.run()
+	app.debug = True
+	app.run(host="0.0.0.0")
 
