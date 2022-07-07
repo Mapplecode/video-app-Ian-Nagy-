@@ -1,0 +1,74 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<main style="margin-top: 58px">
+  <div class="container pt-4">
+    <a href="{{ url_for('createuser')}}"><button type="button" class="btn btn-primary float-end"><i class="fas fa-add fa-fw me-3"></i>
+      Add Users</button></a>
+    <table class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+          <tr>
+            <th>SR</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>status</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        {% for que in userdata %}
+        <tbody>
+          <tr>
+            <td>
+                {{  loop.index }}
+            </td>
+            <td>
+              <a href="userdetails/{{ que._id }}"><p class="fw-normal mb-1">{{ que.name }}</p></a>
+              <!-- <p class="text-muted mb-0"></p> -->
+            </td>
+            <td>
+              <p>
+                {{ que.email }}
+              </p>
+            </td>
+            <td>
+              {% if que.status == "active" %}
+                <span class="badge badge-success rounded-pill d-inline">Active</span>
+              {% elif que.status == "deactive" %}
+                <span class="badge badge-danger rounded-pill d-inline">Deactive</span>
+              {% endif %}
+              </td>
+              <td>
+                <span class="badge badge-warning rounded-pill d-inline">{{ que.role }}</span>
+              </td>
+              <td>
+                <form action="/delete/{{que._id}}" method="post">
+                {% if que.role != 'admin' %}
+                <a href="/userdataedit/{{que._id}}">
+                  <button
+                        type="button"
+                        class="btn btn-success btn-rounded btn-sm fw-bold"
+                        data-mdb-ripple-color="dark"
+                        >
+                  Edit
+                </button>
+                </a>
+                <button
+                        type="submit"
+                        class="btn btn-danger btn-rounded btn-sm fw-bold">
+                  Delete
+                </button>
+              
+              </a>
+                {%else%}
+                <span class="text-muted">For Admin no action.</span>
+                  {%endif%}
+                </form> 
+              </td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+    </div>
+</main>
+
+{% endblock %}

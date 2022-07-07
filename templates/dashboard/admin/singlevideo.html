@@ -35,7 +35,7 @@
 
         <p>Share Video unique link : <a id="p1" href="http://127.0.0.1:5000/video/watch/{{ video._id }}" onclick="copyToClipboard('#p1')">http://127.0.0.1:5000/video/watch/{{ video._id }}</a></p>
           
-        <form class="row row-cols-lg-auto g-3 align-items-center">
+        <!-- <form class="row row-cols-lg-auto g-3 align-items-center">
           <div class="form-group mt-2">
             <div class="form-outline">
               <label for="role">Share link with accounts</label>
@@ -46,7 +46,7 @@
               </select>
             </div>
             </div>
-        </form>
+        </form> -->
 
         <div class="card-footer">
             <small class="text-muted">{{ video.created_at.strftime('%c') }}</small>
@@ -58,9 +58,35 @@
         <!-- Section: Video -->
     </div>
 </main>
-
+<main style="margin-top: 58px">
+  <div class="container pt-4 mb-4">
+    <div class="card shadow">
+      
+        
+        <div class="card-body">
+          <h3>Feedback</h3>        
+          <hr>
+          <div class="row">
+            {% for feed in feedback%}
+            <div class="col-md-6">
+              <ul>
+                <h4>#{{ loop.index }} out of #{{ loop.length }}</h4>
+                 <ol>
+                {% for i in feed.data %}
+                <li>{{i}}</li> 
+                <p>Ans : {{feed.data[i]}}</p> 
+                {% endfor %}
+              </ol>
+              </ul>
+            </div>
+            {% endfor %}
+          </div>
+      </div>
+    </div>
+    </div>
+    </main>
 <!-- Vertically centered modal -->
-<div class="modal fade" id="centercheck" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="centercheck" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -76,7 +102,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
   
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>

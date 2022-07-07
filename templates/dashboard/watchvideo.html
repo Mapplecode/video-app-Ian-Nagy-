@@ -16,6 +16,7 @@
 
 
 <div class="container mt-5">
+    <p id="videoId" hidden>{{ request.url.split('/')[-1] }}</p>
     <!-- page 0 -->
     <div class="row" id="welcome" hidden>
         <div class="col-md-3">
@@ -71,8 +72,8 @@
 
 <!-- VIdeo  -->
 <div class="row" id="video" hidden>
-    <div class="card shadow mt-5 mb-5">
-        <div class="card-body">
+    <!-- <div class="card shadow mt-5 mb-5">
+        <div class="card-body"> -->
             <form action="" method="post">
                 <h5 class="card-title">Watch this video:</h5>
                 <hr>
@@ -82,8 +83,8 @@
                         <hr>
                     <button type="button" class="btn btn-primary float-end" id="continue">Continue</button>
             </form>
-        </div>
-    </div>
+        <!-- </div>
+    </div> -->
 </div>
 
 <!-- Question -->
@@ -206,6 +207,7 @@ $("#quebutton"+val).click(function() {
         var value = $("#feedback"+step).val();
         data[key] = value; 
     }
+    data["videoId"] = $("#videoId").text()
     console.log(data);   
     $.ajax({
       type: 'POST',

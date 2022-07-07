@@ -48,7 +48,9 @@
                     </div>
                   </td>
                   <td>
-                    <span class="badge badge-success rounded-pill d-inline">{{ video.projectinfo.projectname }}</span>
+                    <a href="/projectdetails/{{ video.projectinfo.id }}"><span class="badge badge-success rounded-pill d-inline">
+                      {{ video.projectinfo.projectname }}
+                    </span></a>
                   </td>
                   <td>{{ video.created_at.strftime('%c') }}</td>
                   <td>

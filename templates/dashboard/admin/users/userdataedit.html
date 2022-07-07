@@ -1,0 +1,67 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<main style="margin-top: 58px">
+  <div class="container pt-4">
+   <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-body">
+            <form method="post">
+                <h2 class="text-center mb-5"> Update User data</h2>
+                
+                {% with messages = get_flashed_messages() %}  
+                {% if messages %}  
+                    {% for message in messages %}  
+                        {% if message.split(',')[-1] == 'succ' %}
+                        {% elif message.split(',')[-1] == 'warn' %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong>Warning!</strong> {{ message }}.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                        {% endif %}
+                            <p></p>  
+                    {% endfor %}  
+                    {% endif %}  
+                {% endwith %}  
+            
+                <!-- 2 column grid layout with text inputs for the first and last names -->
+                <div class="row mb-4">
+                    <div class="form-group mt-2">
+                        <div class="form-outline">
+                            <input class="form-control rounded-0"  name="username" type="text" value="{{ userdata.name}}">
+                            <label class="form-label" for="form6Example1">Username</label>
+                          </div>
+                    </div>
+                    <div class="form-group mt-2">
+                        <div class="form-outline">
+                            <input class="form-control rounded-0"  name="email" type="email" value="{{ userdata.email}}">
+                            <label class="form-label" for="form6Example1" >Email</label>
+                          </div>
+                    </div>
+                    <div class="form-group mt-2">
+                    <div class="form-outline">
+                      <select class="form-select" aria-label="Default select example" name="status">
+                        <option selected>Select Status</option>
+                        <option value="active" {% if userdata.status == "active" %} selected {% endif %}>Active</option>
+                        <option value="deactive" {% if userdata.status == "deactive" %} selected {% endif %}>Deactive</option>
+                      </select>
+                    </div>
+                    </div>
+                </div>
+                <!-- Submit button -->
+                <button type="submit" class="btn btn-primary btn-block mb-4">Update</button>
+              </form>
+        </div>
+
+    </div>
+    </div>
+   </div>
+    </div>
+</main>
+
+
+{% endblock %}
