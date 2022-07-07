@@ -16,6 +16,7 @@
 
 
 <div class="container mt-5">
+    <p id="videoId" hidden>{{ request.url.split('/')[-1] }}</p>
     <!-- page 0 -->
     <div class="row" id="welcome" hidden>
         <div class="col-md-3">
@@ -71,8 +72,8 @@
 
 <!-- VIdeo  -->
 <div class="row" id="video" hidden>
-    <div class="card shadow mt-5 mb-5">
-        <div class="card-body">
+    <!-- <div class="card shadow mt-5 mb-5">
+        <div class="card-body"> -->
             <form action="" method="post">
                 <h5 class="card-title">Watch this video:</h5>
                 <hr>
@@ -82,8 +83,8 @@
                         <hr>
                     <button type="button" class="btn btn-primary float-end" id="continue">Continue</button>
             </form>
-        </div>
-    </div>
+        <!-- </div>
+    </div> -->
 </div>
 
 <!-- Question -->
@@ -96,7 +97,7 @@
             
             <form action="" method="post">
                 <h5 class="card-title">Post-Video Question #{{loop.index}} of {{loop.length }}:</h5>
-                <h6>➡️ {{ que.question }}</h6>
+                <h6 id="que{{loop.index}}">➡️{{ que.question }}</h6>
                 <p hidden id="queid{{loop.index}}">{{ que._id}}</p>
                 <p class="text-muted">{{ que.note }}</p>
                 <div class="form-group mt-2">
@@ -177,47 +178,37 @@ $("#session").click(function() {
     $.ajax({
       type: 'POST',
       url: "/start/cam",
-      data: 'data',
+      data: {"status":"start"},
       dataType: "json",
       success: function(data){
             console.log("success")
         }
     });
 });
+
+var val = $(".card-title").text().split(":")[1].split(" ")[4];
 $("#continue").click(function() {
     $('#video').hide();
     $('#question1').removeAttr('hidden');
+    var val = $(".card-title").text().split(":")[1].split(" ")[4];
+    for (let step = 1; step < parseInt(val); step++) {
+        $("#quebutton"+step).click(function() {
+        $('#question'+step).hide();
+        $('#question'+(step+1)).removeAttr('hidden');
+    });
+};
 });
-
-// TODO dynamic
-$("#quebutton1").click(function() {
-    $('#question1').hide();
-    $('#question2').removeAttr('hidden');
-});
-
-$("#quebutton2").click(function() {
-    $('#question2').hide();
-    $('#question3').removeAttr('hidden');
-});
-
-$("#quebutton3").click(function() {
-    $('#question3').hide();
-    $('#question4').removeAttr('hidden');
-});
-
-$("#quebutton4").click(function() {
-    $('#question4').hide();
+$("#quebutton"+val).click(function() {
+    $('#question'+val).hide();
     $('#thanks').removeAttr('hidden');
-    var data = {
-            "question1feedback":$("#feedback1").val(),
-           
-            "question3feedback":$("#feedback2").val(),
-           
-            "question2feedback":$("#feedback3").val(),
-             
-            "question4feedback":$("#feedback4").val(),
+    var data = {};
+    for (let step = 1; step < (parseInt(val)+1); step++) {
+        var key = $("#que"+step).text();
+        var value = $("#feedback"+step).val();
+        data[key] = value; 
     }
-        
+    data["videoId"] = $("#videoId").text()
+    console.log(data);   
     $.ajax({
       type: 'POST',
       url: "/questionsfeedback",
