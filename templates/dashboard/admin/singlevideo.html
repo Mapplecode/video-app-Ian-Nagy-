@@ -32,8 +32,7 @@
         <p class="card-text ">
             {{video.description}}
           </p>
-
-        <p>Share Video unique link : <a id="p1" href="http://127.0.0.1:5000/video/watch/{{ video._id }}" onclick="copyToClipboard('#p1')">http://127.0.0.1:5000/video/watch/{{ video._id }}</a></p>
+        <p>Share Video unique link : <a id="p1" href="http://{{ request.remote_addr }}:5000/video/watch/{{ video._id }}" onclick="copyToClipboard('#p1')">http://127.0.0.1:5000/video/watch/{{ video._id }}</a></p>
           
         <!-- <form class="row row-cols-lg-auto g-3 align-items-center">
           <div class="form-group mt-2">
