@@ -2,86 +2,12 @@ from flask import Flask,render_template,session,redirect,request,flash,url_for,R
 # from flask_paginate import Pagination, get_page_args
 from flask_session import Session
 from functools import wraps
-import pymongo,time
-from datetime import datetime
+import pymongo
+import datetime
 from passlib.hash import pbkdf2_sha256
 import uuid, os
 from opencvoperation import *
 
-
-# ==========================================================
-import cv2
-import time
-import os, sys
-import numpy as np
-from threading import Thread
-global capture,rec_frame, grey, switch, neg, face, rec, out 
-capture=0
-grey=0
-neg=0
-face=0
-switch=1
-rec=0
-
-#Load pretrained face detection model    
-net = cv2.dnn.readNetFromCaffe('./saved_model/deploy.prototxt.txt', './saved_model/res10_300x300_ssd_iter_140000.caffemodel')
-
-# camera = cv2.VideoCapture(0)
-
-def record(out):
-    global rec_frame
-    while(rec):
-        time.sleep(0.05)
-        out.write(rec_frame)
-
-
-def detect_face(frame):
-    global net
-    (h, w) = frame.shape[:2]
-    blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 1.0,
-        (300, 300), (104.0, 177.0, 123.0))   
-    net.setInput(blob)
-    detections = net.forward()
-    confidence = detections[0, 0, 0, 2]
-
-    if confidence < 0.5:            
-            return frame           
-
-    box = detections[0, 0, 0, 3:7] * np.array([w, h, w, h])
-    (startX, startY, endX, endY) = box.astype("int")
-    try:
-        frame=frame[startY:endY, startX:endX]
-        (h, w) = frame.shape[:2]
-        r = 480 / float(h)
-        dim = ( int(w * r), 480)
-        frame=cv2.resize(frame,dim)
-    except Exception as e:
-        pass
-    return frame
- 
-
-def gen_frames(camera):  # generate frame by frame from camera
-    global out, capture,rec_frame
-    while True:
-        success, frame = camera.read() 
-        if success:
-            if(face):                
-                frame= detect_face(frame)
-            if(rec):
-                rec_frame=frame
-                frame= cv2.putText(cv2.flip(frame,1),"Recording...", (0,25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),4)
-                frame=cv2.flip(frame,1)
-            try:
-                ret, buffer = cv2.imencode('.jpg', cv2.flip(frame,1))
-                frame = buffer.tobytes()
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-            except Exception as e:
-                pass
-                
-        else:
-            pass
-# ==========================================================
 app = Flask(__name__,static_url_path='/static')
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -138,7 +64,7 @@ def register():
 		"password": request.form.get('password'),
 		"role": "user",
 		"status" : "active",
-		"created_at": datetime.now()
+		"created_at": datetime.datetime.now()
 		}
 
 		# Encrypt the password
@@ -160,7 +86,7 @@ def logout():
 		session.clear()
 		return redirect('/')
 
-
+# =========================================================================
 
 @app.route("/dashboard",methods=['GET','POST'])
 @login_required
@@ -209,7 +135,7 @@ def createuser():
 					"status": status,
 					"role":role,
 					"password" : pbkdf2_sha256.encrypt(password),
-					"created_at" : datetime.today(),
+					"created_at" : datetime.datetime.now(),
 					"updated_at" : "null"
 			}
 			db.users.insert_one(insert_user)
@@ -231,7 +157,7 @@ def userdataedit(id):
 				"name": name,
 				"email": email,
 				"status": status,
-				"updated_at" : datetime.today()
+				"updated_at" : datetime.datetime.now()
 		}
 		db.users.find_one_and_update({"_id": id}, 
 									{"$set": update_user})
@@ -280,7 +206,7 @@ def create_project():
 				}
 
 				db.project.insert_one(projectdata)
-				
+				duration = calculate_video_duration(destination)
 				# Create the video object
 				video = {
 				"_id": uuid.uuid4().hex,
@@ -290,7 +216,8 @@ def create_project():
 				"description": request.form.get('description'),
 				"filename": destination,
 				"thumbnail": location,
-				"created_at": datetime.today()
+				"duration": duration,
+				"created_at": datetime.datetime.now()
 				}
 				# insert int videos table
 				db.videos.insert_one(video)
@@ -343,7 +270,7 @@ def create_qa():
 				"question": question,
 				"note": note,
 				"status": status,
-				"created_at" : datetime.today(),
+				"created_at" : datetime.datetime.now(),
 				"updated_at" : 'null'
 				}
 		db.questions.insert_one(ins_question)
@@ -363,7 +290,7 @@ def update_qa(id):
 				"question": question,
 				"note": note,
 				"status": status,
-				"updated_at" : datetime.today()
+				"updated_at" : datetime.datetime.now()
 
 		}
 		db.questions.find_one_and_update({"_id": id}, 
@@ -387,12 +314,6 @@ def delete(id):
 @login_required
 def feedback_qa():
 	if request.method == "POST":
-		# ins_feedback = {
-		# 		"_id": uuid.uuid4().hex,
-		# 		"data": dict(request.form),
-		# 		"user_info" : {"_id":session['user']["_id"],"email" : session['user']["email"]},
-		# 		"created_at": datetime.today()
-		# 		}
 		res_data = dict(request.form)
 		if "videoId" in list(res_data.keys()):
 			video_id = res_data["videoId"]
@@ -402,7 +323,7 @@ def feedback_qa():
 				"_id": uuid.uuid4().hex,
 				"data": res_data,
 				"videoId" : video_id,
-				"created_at": datetime.today()
+				"created_at": datetime.datetime.now()
 				}
 		db.feedback.insert_one(ins_feedback)
 		return {"data":"success"}
@@ -419,46 +340,13 @@ def watch_video(id):
 
 @app.route("/start/cam",methods=["POST"])
 def start_Cam():
-	global switch,camera
+	global switch,camera,start
 	if request.method == "POST":
-		# frame_width = int(cap.get(3))
-		# frame_height = int(cap.get(4))
-		# video_cod = cv2.VideoWriter_fourcc(*'XVID')
-		# video_output= cv2.VideoWriter('captured_video.avi',
-		# 					video_cod,
-		# 					10,
-		# 					(frame_width,frame_height))
 		if request.form.get("status") == "start":
-			camera = cv2.VideoCapture(0)
-			gen_frames(camera)
-			global rec, out
-			rec = not rec
-			if(rec):
-				now=datetime.now() 
-				# fourcc = cv2.VideoWriter_fourcc(*'XVID')
-				fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-				out = cv2.VideoWriter('./videostore/vid_{}.mp4'.format(str(now).replace(":",'')), fourcc, 20.0, (640, 480))
-				#Start new thread for recording the video
-				thread = Thread(target = record, args=[out,])
-				thread.start()
-			elif(rec==False):
-				out.release()
-		# 	while(True):
-		# 		ret, frame = cap.read()
-		# 		if ret == True: 
-		# 			video_output.write(frame)
-		# 			cv2.imshow('frame',frame)
-		# 			if cv2.waitKey(1) & 0xFF == ord('x'):
-		# 				break
-		# 		else:
-		# 			break  
-			print("The video was successfully saved")
-			return {"test":"success"}
+			return {"status":"Recording..."}
 		elif request.form.get("status") == "stop":
-			# cap.release()
-			# video_output.release()
-			# cv2.destroyAllWindows()
-			return {"test":"success"} 
+			print("The video was successfully saved")
+			return {"status":"The video was successfully saved"} 
 
 #================================(Project)==================================
 
@@ -477,5 +365,5 @@ def projectdetailview(id):
 
 if __name__ == "__main__":
 	app.debug = True
-	app.run(host="0.0.0.0")
+	app.run(host="0.0.0.0",port="5000")
 

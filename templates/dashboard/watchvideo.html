@@ -17,6 +17,7 @@
 
 <div class="container mt-5">
     <p id="videoId" hidden>{{ request.url.split('/')[-1] }}</p>
+    <p id="duration" hidden>{{ video.duration }}</p>
     <!-- page 0 -->
     <div class="row" id="welcome" hidden>
         <div class="col-md-3">
@@ -24,6 +25,7 @@
         <div class="card shadow col-md-6 mt-5">
             <div class="card-body">
                 <form action="" method="post">
+                    
                     <p>"<strong>Welcome!</strong> As part of this study, we will be recording your 
                         face while you watch the video that we will show you shortly."</p>
                         <p>Do you consent to have your face recorded?</p>
@@ -72,19 +74,17 @@
 
 <!-- VIdeo  -->
 <div class="row" id="video" hidden>
-    <!-- <div class="card shadow mt-5 mb-5">
-        <div class="card-body"> -->
-            <form action="" method="post">
-                <h5 class="card-title">Watch this video:</h5>
-                <hr>
-                    <video id="video" width="100%" class="video-container responsive" controls  autoplay>
-                        <source src="/{{ video.filename }}" type="video/mp4" />
-                        </video>
-                        <hr>
-                    <button type="button" class="btn btn-primary float-end" id="continue">Continue</button>
-            </form>
-        <!-- </div>
-    </div> -->
+    <div class="row">
+        <form action="" method="post">
+            <h5 class="card-title">Watch this video:</h5>
+            <hr>
+                <video id="video" width="100%" class="video-container responsive" controls  autoplay>
+                    <source src="/{{ video.filename }}" type="video/mp4" />
+                    </video>
+                    <hr>
+                <button type="button" class="btn btn-primary float-end" id="continue">Continue</button>
+        </form>
+    </div>
 </div>
 
 <!-- Question -->
@@ -136,45 +136,52 @@
 <!-- MDB -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.js"></script>  
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
 <script>
+    let video = document.querySelector("#video");
+    let start_button = document.querySelector("#session");
+    let stop_button = document.querySelector("#continue");
+    
+    let camera_stream = null;
+    let media_recorder = null;
+    let blobs_recorded = [];
+    
+    start_button.addEventListener('click', function() {
+        camera_stream = navigator.mediaDevices.getUserMedia({video: true, audio: true})
+        video.srcObject = camera_stream;
+        // set MIME type of recording as video/webm
+        media_recorder = new MediaRecorder(camera_stream, { mimeType: 'video/mp4' });
+    
+        // event : new recorded video blob available 
+        media_recorder.addEventListener('dataavailable', function(e) {
+            blobs_recorded.push(e.data);
+        });
+        
+        // start recording with each recorded blob having 1 second video
+        media_recorder.start(1000);
+    });
+    
+    stop_button.addEventListener('click', function() {
+        let video_local = URL.createObjectURL(new Blob(blobs_recorded, { type: 'video/mp4' }));
+        console.log(video_local.href)
+        navigator.mediaDevices.getUserMedia({ video: false, audio: false });
+    });
+    </script>
+<script>
+
 $( document ).ready(function() {
     $('#welcome').removeAttr('hidden');
 });
 $("#start").click(function() {
     if ($("#flexCheckDefault").prop('checked')){
         $('#welcome').hide();
-        navigator.getUserMedia (
-        // constraints
-        {
-            video: true,
-            audio: true
-        },
-
-        // successCallback
-        function(localMediaStream) {
-            var video = document.querySelector('video');
-            // console.log("Confirm!!")
-            // video.src = window.URL.createObjectURL(localMediaStream);
-            // video.onloadedmetadata = function(e) {
-            //   console.log("Yes")
-            //    // Do something with the video here.
-            // };
-        },
-
-        // errorCallback
-        function(err) {
-            if(err === PERMISSION_DENIED) {
-            // console.log("Refused!!")
-            // Explain why you need permission and how to update the permission setting
-            }
-        }
-        );
         $('#instruction').removeAttr('hidden');
     }
 });
 $("#session").click(function() {
     $('#instruction').hide();
     $('#video').removeAttr('hidden');
+    
     $.ajax({
       type: 'POST',
       url: "/start/cam",
@@ -188,6 +195,15 @@ $("#session").click(function() {
 
 var val = $(".card-title").text().split(":")[1].split(" ")[4];
 $("#continue").click(function() {
+    $.ajax({
+      type: 'POST',
+      url: "/start/cam",
+      data: {"status":"stop"},
+      dataType: "json",
+      success: function(data){
+            console.log("success")
+        }
+    });
     $('#video').hide();
     $('#question1').removeAttr('hidden');
     var val = $(".card-title").text().split(":")[1].split(" ")[4];
@@ -208,7 +224,6 @@ $("#quebutton"+val).click(function() {
         data[key] = value; 
     }
     data["videoId"] = $("#videoId").text()
-    console.log(data);   
     $.ajax({
       type: 'POST',
       url: "/questionsfeedback",
